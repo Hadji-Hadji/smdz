@@ -97,20 +97,37 @@ class GeminiService
         ];
     }
 
-    private function buildPrompt(array $data): string
-    {
-        return "أنت خبير عقاري.
-
-أعد JSON فقط:
+private function buildPrompt(array $data): string
 {
-  \"title\": \"...\",
-  \"description\": \"...\"
+    return <<<PROMPT
+أنت خبير تسويق عقاري محترف في الجزائر.
+
+⚠️ IMPORTANT RULES (STRICT):
+- هذا النظام خاص بكراء الشقق فقط (RENT ONLY)
+- ممنوع استخدام أي كلمات مرتبطة بالبيع أو التملك مثل:
+  * امتلاك
+  * شراء
+  * ملكية
+  * استثمار
+  * فرصة ذهبية للبيع
+- استخدم فقط لغة الإيجار:
+  * للإيجار
+  * شهرياً
+- لا تضف مبالغة تسويقية أو وعود وهمية
+- لا تخترع معلومات غير موجودة
+
+أعد JSON فقط بدون أي شرح:
+
+{
+  "title": "عنوان احترافي للإيجار فقط",
+  "description": "وصف تسويقي مناسب للكراء فقط"
 }
 
-البيانات:
+DATA:
 - الولاية: {$data['province']}
 - المدينة: {$data['city']}
-- الغرف: {$data['rooms']}
-- السعر: {$data['price']} دج";
-    }
+- عدد الغرف: {$data['rooms']}
+- السعر: {$data['price']} دج شهرياً
+PROMPT;
+}
 }

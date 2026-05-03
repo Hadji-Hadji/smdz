@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\API\AdAnalysisController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -74,6 +75,8 @@ Route::middleware("auth:api")->group(function () {
     // هـ) المفضلة (Favorite)
     Route::get("/favorites", [FavoriteController::class, "index"]);
     Route::post("/favorites/{apartment_id}", [FavoriteController::class, "toggle"]);
+
+    Route::post('ai/analyze-ad', AdAnalysisController::class);
 
     // و) مسارات المسؤول (Admin APIs)
     Route::prefix("admin")->middleware("admin.check")->group(function () {
