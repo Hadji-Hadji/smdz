@@ -354,7 +354,8 @@ class AdminController extends Controller
                     "user_name" => $verification->user->name,
                     "user_email" => $verification->user->email,
                     "document_type" => $verification->document_type,
-                    "document_path" => Storage::url($verification->document_path),
+                    // "document_path" => Storage::url($verification->document_path),
+                "document_path" => $verification->document_path,
                     "status" => $verification->status,
                     "created_at" => $verification->created_at->format("Y-m-d H:i:s"),
                 ];

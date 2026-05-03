@@ -115,7 +115,8 @@ class LandlordController extends Controller
                 'id' => $verification->id,
                 'user_id' => $user->id,
                 'document_type' => $verification->document_type,
-                'document_path' => url('storage/' . $verification->document_path),
+                // 'document_path' => url('storage/' . $verification->document_path),
+                'document_path' => $verification->document_path,
                 'status' => $verification->status,
                 'user_verification_status' => $user->verification_status
             ]
