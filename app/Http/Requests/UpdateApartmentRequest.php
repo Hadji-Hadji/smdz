@@ -28,6 +28,10 @@ class UpdateApartmentRequest extends FormRequest
             "amenities.*" => "string|max:100",
             "images" => "sometimes|array",
             "images.*" => "image|mimes:jpeg,png,jpg,gif,svg|max:10240", // 10MB
+
+            'latitude'  => 'sometimes|required|numeric|between:-90,90',
+            'longitude' => 'sometimes|required|numeric|between:-180,180',
+
         ];
     }
 

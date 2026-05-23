@@ -34,6 +34,10 @@ class Apartment extends Model
         "phone_clicks",
         "amenities",
         "images",
+        
+        // 📌 الحقول الجديدة الخاصة بالموقع الجغرافي
+        "latitude",
+        "longitude",
     ];
 
     /**
@@ -48,6 +52,10 @@ class Apartment extends Model
         "images" => "array",    // Cast JSON column to array
         "price" => "decimal:2",
         "area" => "decimal:2",
+        
+        // 📌 تحويل الإحداثيات إلى أرقام عشرية بدقة عالية
+        "latitude" => "decimal:8",
+        "longitude" => "decimal:8",
     ];
 
     /**

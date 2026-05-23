@@ -55,8 +55,16 @@ class ApartmentController extends Controller
                 $query->orderBy('created_at', 'desc');
         }
 
+        // 📌 قمنا بإضافة latitude و longitude هنا لكي يستطيع الفرونتيند رسم الشقق مباشرة في صفحة النتائج العامة إذا أراد
         $apartments = $query->get([
-            'id', 'title', 'wilaya', 'price', 'images', 'amenities'
+            'id',
+            'title',
+            'wilaya',
+            'price',
+            'images',
+            'amenities',
+            'latitude',
+            'longitude'
         ]);
 
         return response()->json([
@@ -101,6 +109,10 @@ class ApartmentController extends Controller
                 "landlord_phone" => $apartment->landlord->phone,
                 "images" => $apartment->images,
                 "amenities" => $apartment->amenities,
+
+                // 📌 إرسال الإحداثيات للفرونتيند ليعرض موقع الشقة على الخريطة في صفحة تفاصيل الشقة
+                "latitude" => $apartment->latitude,
+                "longitude" => $apartment->longitude,
             ]
         ]);
     }
@@ -144,6 +156,10 @@ class ApartmentController extends Controller
             "images"       => $imagePaths,
             "is_active"    => true,
             "status"       => "pending",
+
+            // 📌 تخزين الإحداثيات الجديدة القادمة من الـ Request الموثق
+            "latitude"     => $validated['latitude'],
+            "longitude"    => $validated['longitude'],
         ]);
 
         return response()->json([
@@ -277,5 +293,47 @@ class ApartmentController extends Controller
                 "phone_clicks" => $apartment->phone_clicks
             ]
         ]);
+    }
+
+    /**
+     * البحث عن الشقق القريبة بناءً على الإحداثيات الجغرافية (واجهة الزبون)
+     */
+    public function getNearbyApartments(\Illuminate\Http\Request $request)
+    {
+        // 1. التحقق من البيانات القادمة عبر الـ Query Parameters
+        $request->validate([
+            'latitude'  => 'required|numeric|between:-90,90',
+            'longitude' => 'required|numeric|between:-180,180',
+            'radius'    => 'nullable|numeric|min:1' // نصف قطر البحث بالكيلومتر
+        ]);
+
+        $lat = $request->latitude;
+        $lng = $request->longitude;
+
+        // إذا لم يحدد الفرونتيند نصف القطر، نعتمد 15 كلم كقيمة افتراضية
+        $radius = $request->radius ?? 15;
+
+        // 2. تطبيق معادلة هافيرسين لحساب المسافة الدقيقة لكل شقة
+        $apartments = Apartment::query()
+            ->where('is_active', true)
+            ->where('status', 'approved')
+            ->select('*')
+            // حساب المسافة بالكيلومتر وتسمية الحقل الناتج باسم distance
+            ->selectRaw(
+                '(6371 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude)))) AS distance',
+                [$lat, $lng, $lat]
+            )
+            // فلترة النتائج لتشمل فقط الشقق الواقعة داخل نصف القطر المحدد
+            ->having('distance', '<', $radius)
+            // ترتيب الشقق من الأقرب إلى الأبعد
+            ->orderBy('distance', 'asc')
+            ->get();
+
+        // 3. إعادة النتائج في استجابة JSON نظيفة ومفهومة للفرونتيند
+        return response()->json([
+            "status" => "success",
+            "count"  => $apartments->count(),
+            "data"   => $apartments
+        ], 200);
     }
 }
