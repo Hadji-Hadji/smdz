@@ -27,7 +27,6 @@ Route::prefix("auth")->group(function () {
 
 // مسارات الشقق للزوار
 Route::get("apartments", [ApartmentController::class, "index"]);
-Route::get("apartments/nearby", [ApartmentController::class, "getNearbyApartments"]);
 Route::get("apartments/{id}", [ApartmentController::class, "show"]);
 // مسارات معرفة الاسعار العامة
 Route::post('ai/suggest-apartment-content', [AiAssistantController::class, 'suggestContent']);
