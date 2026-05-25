@@ -20,7 +20,12 @@ class ListApartmentsRequest extends FormRequest
             "rooms" => "sometimes|integer|min:0",
             "min_price" => "sometimes|numeric|min:0",
             "max_price" => "sometimes|numeric|min:0",
-            "sort_by" => "sometimes|in:latest,price_asc,price_desc",
+
+            'sort_by' => 'nullable|string|in:latest,price_asc,price_desc,distance_asc',
+
+            'latitude'  => 'nullable|numeric|between:-90,90',
+            'longitude' => 'nullable|numeric|between:-180,180',
+            'radius'    => 'nullable|numeric|min:1',
         ];
     }
 }
