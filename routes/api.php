@@ -11,7 +11,7 @@ use App\Http\Controllers\API\FavoriteController;
 use App\Http\Controllers\API\LandlordController;
 use App\Http\Controllers\API\AdminController;
 use App\Http\Controllers\API\AiAssistantController;
-use App\Http\Controllers\Api\ImageCheckController;
+use App\Http\Controllers\API\ImageCheckController;
 use App\Http\Controllers\API\UserController;
 
 /*
