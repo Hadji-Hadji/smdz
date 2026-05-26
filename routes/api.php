@@ -11,6 +11,7 @@ use App\Http\Controllers\API\FavoriteController;
 use App\Http\Controllers\API\LandlordController;
 use App\Http\Controllers\API\AdminController;
 use App\Http\Controllers\API\AiAssistantController;
+use App\Http\Controllers\Api\ImageCheckController;
 use App\Http\Controllers\API\UserController;
 
 /*
@@ -62,6 +63,7 @@ Route::middleware("auth:api")->group(function () {
     // 1. مسار الإضافة: يتطلب فحص حد الاشتراك
     Route::middleware(["verified.landlord", "check.subscription.limit"])->group(function () {
         Route::post("apartments", [ApartmentController::class, "store"]);
+        Route::post('check-image', [ImageCheckController::class, 'check']);
     });
 
     // 2. مسارات التعديل والحذف: لا تتطلب فحص الحد
